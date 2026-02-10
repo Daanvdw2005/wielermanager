@@ -1,0 +1,6 @@
+streamlit
+cloudscraper
+beautifulsoup4
+pandas
+pulp
+altair
