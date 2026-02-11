@@ -177,7 +177,7 @@ def scrape_team_data(team_urls):
             response = scraper.get(team_url, headers=headers)
             if response.status_code != 200:
                 st.error(f"PCS blokkeert toegang: Status {response.status_code}")
-            except Exception as e:
+        except Exception as e:
             st.error(f"Er ging iets mis: {e}")
         #     response = scraper.get(team_url, headers=headers)
         #     if response.status_code == 200:
