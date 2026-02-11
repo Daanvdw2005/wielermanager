@@ -175,31 +175,36 @@ def scrape_team_data(team_urls):
         try:
             time.sleep(random.uniform(0.4, 0.8))
             response = scraper.get(team_url, headers=headers)
-            if response.status_code == 200:
-                soup = BeautifulSoup(response.text, "html.parser")
-                rider_items = soup.select('div.page-content > ul.list li a') or soup.select('ul.list a')
+            if response.status_code != 200:
+                st.error(f"PCS blokkeert toegang: Status {response.status_code}")
+            except Exception as e:
+            st.error(f"Er ging iets mis: {e}")
+        #     response = scraper.get(team_url, headers=headers)
+        #     if response.status_code == 200:
+        #         soup = BeautifulSoup(response.text, "html.parser")
+        #         rider_items = soup.select('div.page-content > ul.list li a') or soup.select('ul.list a')
 
-                for a in rider_items:
-                    href = a.get('href', '')
-                    if "rider/" in href and "statistics" not in href:
-                        full_url = href if href.startswith("http") else f"https://www.procyclingstats.com/{href.lstrip('/')}"
-                        if full_url not in seen_urls:
-                            seen_urls.add(full_url)
-                            name_from_list = a.text.strip()
+        #         for a in rider_items:
+        #             href = a.get('href', '')
+        #             if "rider/" in href and "statistics" not in href:
+        #                 full_url = href if href.startswith("http") else f"https://www.procyclingstats.com/{href.lstrip('/')}"
+        #                 if full_url not in seen_urls:
+        #                     seen_urls.add(full_url)
+        #                     name_from_list = a.text.strip()
                             
-                            races, points, race_list, age, weight, price = get_rider_stats(full_url, name_from_list)
+        #                     races, points, race_list, age, weight, price = get_rider_stats(full_url, name_from_list)
                             
-                            exp_score = (points * 0.2) + (races * 60)
-                            if age < 25: exp_score *= 1.1
+        #                     exp_score = (points * 0.2) + (races * 60)
+        #                     if age < 25: exp_score *= 1.1
 
-                            all_riders.append({
-                                "Naam": name_from_list, "Team": team_name, "Leeftijd": age,
-                                "Gewicht": weight, "Prijs": price, "Races": races,
-                                "Punten": points, "Verwachte_Score": exp_score,
-                                "Programma": race_list
-                            })
-        except: pass
-        progress_bar.progress((i + 1) / total)
+        #                     all_riders.append({
+        #                         "Naam": name_from_list, "Team": team_name, "Leeftijd": age,
+        #                         "Gewicht": weight, "Prijs": price, "Races": races,
+        #                         "Punten": points, "Verwachte_Score": exp_score,
+        #                         "Programma": race_list
+        #                     })
+        # except: pass
+        # progress_bar.progress((i + 1) / total)
         
     status_text.text("Klaar!")
     df = pd.DataFrame(all_riders)
